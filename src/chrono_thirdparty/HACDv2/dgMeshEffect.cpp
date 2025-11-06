@@ -1204,8 +1204,10 @@ void dgMeshEffect::BuildFromVertexListIndexList(
 	hacd::HaI32 vertexStride = hacd::HaI32 (vertexStrideInBytes / sizeof (hacd::HaF32));
 	for (int i = 0; i < vertexCount; i ++) {
 		int index = i * vertexStride;
-		AddVertex (dgBigVector (vertex[index + 0], vertex[index + 1], vertex[index + 2], vertex[index + 3]));
-		layerCountBase += (vertex[index + 3]) > hacd::HaF32(layerCountBase);
+		// Handle both 3-component (xyz) and 4-component (xyzw) vertices
+		hacd::HaF32 w_component = (vertexStride >= 4) ? vertex[index + 3] : hacd::HaF32(0.0);
+		AddVertex (dgBigVector (vertex[index + 0], vertex[index + 1], vertex[index + 2], w_component));
+		layerCountBase += w_component > hacd::HaF32(layerCountBase);
 	}
 
 
